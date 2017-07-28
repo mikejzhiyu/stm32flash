@@ -328,7 +328,7 @@ static stm32_err_t stm32_send_init_seq(const stm32_t *stm)
 		return STM32_ERR_OK;
 	}
 	if (p_err != PORT_ERR_TIMEDOUT) {
-		fprintf(stderr, "Failed to init device.\n");
+		fprintf(stderr, "Failed to init device:1.\n");
 		return STM32_ERR_UNKNOWN;
 	}
 
@@ -344,7 +344,7 @@ static stm32_err_t stm32_send_init_seq(const stm32_t *stm)
 	p_err = port->read(port, &byte, 1);
 	if (p_err == PORT_ERR_OK && byte == STM32_NACK)
 		return STM32_ERR_OK;
-	fprintf(stderr, "Failed to init device.\n");
+	fprintf(stderr, "Failed to init device:2.\n");
 	return STM32_ERR_UNKNOWN;
 }
 
@@ -886,6 +886,7 @@ stm32_err_t stm32_erase_memory(const stm32_t *stm, uint32_t spage, uint32_t page
 	 * Some device, like STM32L152, cannot erase more than 512 pages in
 	 * one command. Split the call.
 	 */
+	printf("pages:%d\n", pages);
 	while (pages) {
 		n = (pages <= 512) ? pages : 512;
 		s_err = stm32_pages_erase(stm, spage, n);

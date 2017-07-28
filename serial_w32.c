@@ -39,6 +39,7 @@ struct serial {
 
 static serial_t *serial_open(const char *device)
 {
+	printf("serial_open\n");
 	serial_t *h = calloc(sizeof(serial_t), 1);
 	char *devName;
 

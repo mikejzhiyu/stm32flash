@@ -219,6 +219,7 @@ static port_err_t serial_setup(serial_t *h, const serial_baud_t baud,
 static port_err_t serial_posix_open(struct port_interface *port,
 				    struct port_options *ops)
 {
+	printf("serial_posix_open\n");
 	serial_t *h;
 
 	/* 1. check options */
@@ -249,7 +250,16 @@ static port_err_t serial_posix_open(struct port_interface *port,
 		serial_close(h);
 		return PORT_ERR_UNKNOWN;
 	}
-
+	//dtr control
+	int DTR_flag = TIOCM_DTR;
+	ioctl(h->fd, TIOCMBIS,&DTR_flag);
+	//dtr control end
+	//reset port
+	int RTS_flag = TIOCM_RTS;
+	ioctl(h->fd,TIOCMBIS,&RTS_flag);
+	ioctl(h->fd,TIOCMBIC,&RTS_flag);
+	sleep(2);
+	//reset port end
 	port->private = h;
 	return PORT_ERR_OK;
 }

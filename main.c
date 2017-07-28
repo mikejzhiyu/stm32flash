@@ -55,6 +55,7 @@ struct port_interface *port = NULL;
 struct port_options port_opts = {
 	.device			= NULL,
 	.baudRate		= SERIAL_BAUD_57600,
+//	.baudRate       = SERIAL_BAUD_9600,
 	.serial_mode		= "8e1",
 	.bus_addr		= 0,
 	.rx_frame_max		= STM32_MAX_RX_FRAME,
@@ -526,6 +527,7 @@ int main(int argc, char* argv[]) {
 		//       contents first, so it can be preserved and combined with new data
 		if (!no_erase && num_pages) {
 			fprintf(diag, "Erasing memory\n");
+			printf("first_page:%d, num_pages:%d\n", first_page, num_pages);
 			s_err = stm32_erase_memory(stm, first_page, num_pages);
 			if (s_err != STM32_ERR_OK) {
 				fprintf(stderr, "Failed to erase memory\n");

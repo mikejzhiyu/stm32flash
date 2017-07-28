@@ -36,6 +36,7 @@ static struct port_interface *ports[] = {
 
 port_err_t port_open(struct port_options *ops, struct port_interface **outport)
 {
+	printf("port_open\n");
 	int ret;
 	static struct port_interface **port;
 

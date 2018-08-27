@@ -122,6 +122,7 @@
 #include "PollQ.h"
 #include "flash.h"
 #include "comtest2.h"
+#include "serial.h"
 
 /* Task priorities. */
 #define mainQUEUE_POLL_PRIORITY				( tskIDLE_PRIORITY + 2 )
@@ -422,45 +423,7 @@ GPIO_InitTypeDef GPIO_InitStructure;
 
 int fputc( int ch, FILE *f )
 {
-static unsigned short usColumn = 0, usRefColumn = mainCOLUMN_START;
-static unsigned char ucLine = 0;
-
-	if( ( usColumn == 0 ) && ( ucLine == 0 ) )
-	{
-		LCD_Clear();
-	}
-
-	if( ch != '\n' )
-	{
-		/* Display one character on LCD */
-		LCD_DisplayChar( ucLine, usRefColumn, (u8) ch );
-
-		/* Decrement the column position by 16 */
-		usRefColumn -= mainCOLUMN_INCREMENT;
-
-		/* Increment the character counter */
-		usColumn++;
-		if( usColumn == mainMAX_COLUMN )
-		{
-			ucLine += mainROW_INCREMENT;
-			usRefColumn = mainCOLUMN_START;
-			usColumn = 0;
-		}
-	}
-	else
-	{
-		/* Move back to the first column of the next line. */
-		ucLine += mainROW_INCREMENT;
-		usRefColumn = mainCOLUMN_START;
-		usColumn = 0;
-	}
-
-	/* Wrap back to the top of the display. */
-	if( ucLine >= mainMAX_LINE )
-	{
-		ucLine = 0;
-	}
-
+    xSerialPutChar( NULL, ch, 0 );
 	return ch;
 }
 /*-----------------------------------------------------------*/

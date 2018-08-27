@@ -103,8 +103,8 @@ __Vectors       DCD     __initial_sp              ; Top of Stack
                 DCD     I2C2_ER_IRQHandler        ; I2C2 Error
                 DCD     SPI1_IRQHandler           ; SPI1
                 DCD     SPI2_IRQHandler           ; SPI2
-                DCD     vUARTInterruptHandler     ; USART1
-                DCD     USART2_IRQHandler         ; USART2
+                DCD     USART1_IRQHandler         ; USART1
+                DCD     vUARTInterruptHandler         ; USART2
                 DCD     USART3_IRQHandler         ; USART3
                 DCD     EXTI15_10_IRQHandler      ; EXTI Line 15..10
                 DCD     RTCAlarm_IRQHandler       ; RTC Alarm through EXTI Line

@@ -119,16 +119,17 @@ GPIO_InitTypeDef GPIO_InitStructure;
 	hardware. */
 	if( ( xRxedChars != serINVALID_QUEUE ) && ( xCharsForTx != serINVALID_QUEUE ) )
 	{
-		/* Enable USART1 clock */
-		RCC_APB2PeriphClockCmd( RCC_APB2Periph_USART1 | RCC_APB2Periph_GPIOA, ENABLE );	
+		/* Enable USART2 clock */
+		RCC_APB2PeriphClockCmd( RCC_APB2Periph_GPIOA, ENABLE );	
+        RCC_APB1PeriphClockCmd( RCC_APB1Periph_USART2, ENABLE );
 
-		/* Configure USART1 Rx (PA10) as input floating */
-		GPIO_InitStructure.GPIO_Pin = GPIO_Pin_10;
+		/* Configure USART2 Rx (PA3) as input floating */
+		GPIO_InitStructure.GPIO_Pin = GPIO_Pin_3;
 		GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
 		GPIO_Init( GPIOA, &GPIO_InitStructure );
 		
-		/* Configure USART1 Tx (PA9) as alternate function push-pull */
-		GPIO_InitStructure.GPIO_Pin = GPIO_Pin_9;
+		/* Configure USART2 Tx (PA2) as alternate function push-pull */
+		GPIO_InitStructure.GPIO_Pin = GPIO_Pin_2;
 		GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
 		GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
 		GPIO_Init( GPIOA, &GPIO_InitStructure );
@@ -144,17 +145,17 @@ GPIO_InitTypeDef GPIO_InitStructure;
 		USART_InitStructure.USART_CPHA = USART_CPHA_2Edge;
 		USART_InitStructure.USART_LastBit = USART_LastBit_Disable;
 		
-		USART_Init( USART1, &USART_InitStructure );
+		USART_Init( USART2, &USART_InitStructure );
 		
-		USART_ITConfig( USART1, USART_IT_RXNE, ENABLE );
+		USART_ITConfig( USART2, USART_IT_RXNE, ENABLE );
 		
-		NVIC_InitStructure.NVIC_IRQChannel = USART1_IRQChannel;
+		NVIC_InitStructure.NVIC_IRQChannel = USART2_IRQChannel;
 		NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = configLIBRARY_KERNEL_INTERRUPT_PRIORITY;
 		NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
 		NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
 		NVIC_Init( &NVIC_InitStructure );
 		
-		USART_Cmd( USART1, ENABLE );		
+		USART_Cmd( USART2, ENABLE );		
 	}
 	else
 	{
@@ -216,7 +217,7 @@ signed portBASE_TYPE xReturn;
 	if( xQueueSend( xCharsForTx, &cOutChar, xBlockTime ) == pdPASS )
 	{
 		xReturn = pdPASS;
-		USART_ITConfig( USART1, USART_IT_TXE, ENABLE );
+		USART_ITConfig( USART2, USART_IT_TXE, ENABLE );
 	}
 	else
 	{
@@ -238,7 +239,7 @@ void vUARTInterruptHandler( void )
 portBASE_TYPE xHigherPriorityTaskWoken = pdFALSE;
 char cChar;
 
-	if( USART_GetITStatus( USART1, USART_IT_TXE ) == SET )
+	if( USART_GetITStatus( USART2, USART_IT_TXE ) == SET )
 	{
 		/* The interrupt was caused by the THR becoming empty.  Are there any
 		more characters to transmit? */
@@ -246,17 +247,17 @@ char cChar;
 		{
 			/* A character was retrieved from the queue so can be sent to the
 			THR now. */
-			USART_SendData( USART1, cChar );
+			USART_SendData( USART2, cChar );
 		}
 		else
 		{
-			USART_ITConfig( USART1, USART_IT_TXE, DISABLE );		
+			USART_ITConfig( USART2, USART_IT_TXE, DISABLE );		
 		}		
 	}
 	
-	if( USART_GetITStatus( USART1, USART_IT_RXNE ) == SET )
+	if( USART_GetITStatus( USART2, USART_IT_RXNE ) == SET )
 	{
-		cChar = USART_ReceiveData( USART1 );
+		cChar = USART_ReceiveData( USART2 );
 		xQueueSendFromISR( xRxedChars, &cChar, &xHigherPriorityTaskWoken );
 	}	
 	

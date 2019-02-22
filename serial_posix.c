@@ -250,6 +250,17 @@ static port_err_t serial_posix_open(struct port_interface *port,
 		return PORT_ERR_UNKNOWN;
 	}
 
+	//dtr control
+	int DTR_flag = TIOCM_DTR;
+	ioctl(h->fd, TIOCMBIC,&DTR_flag);
+
+	//reset device
+	int RTS_flag = TIOCM_RTS;
+	ioctl(h->fd,TIOCMBIS,&RTS_flag);
+	sleep(1);
+	ioctl(h->fd,TIOCMBIC,&RTS_flag);
+	sleep(1);
+
 	port->private = h;
 	return PORT_ERR_OK;
 }
